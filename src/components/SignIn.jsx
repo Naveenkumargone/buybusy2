@@ -23,7 +23,7 @@ const SignIn = () => {
             localStorage.setItem('userId', user.uid);
             setTimeout(() => {
                 toast.success("Login successful!", { autoClose: 1000 });
-            }, 100);
+            }, 500);
             navigate('/');
 
             // const q = query(collection(db, "users"), where("email", "==", data.email));

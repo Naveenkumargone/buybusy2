@@ -1,31 +1,40 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-// import { db } from "../index";
+import { db } from "../index";
+import { toast } from "react-toastify";
 
 const Orders = () => {
     const [orderDetails, setOrderDetails] = useState(null);
 
-    // useEffect(() => {
-    //     async function getOrderDetails() {
-    //         try {
-    //             const results = await getDocs(collection(db, "orders"));
-    //             const fetchedOrders = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
-    //             setOrderDetails(fetchedOrders);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     }
+    useEffect(() => {
+        async function getOrderDetails() {
+            try {
+                const userid = localStorage.getItem('userId');
+                if (!userid) {
+                    setTimeout(() => {
+                        toast.error('User not found');
+                    }, 500);
+                    return;
+                }
+                const orderquery = query(collection(db, "orders"), where('userid', '==', userid));
+                const results = await getDocs(orderquery);
+                const fetchedOrders = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
+                setOrderDetails(fetchedOrders);
+            } catch (error) {
+                console.log(error);
+            }
+        }
 
-    //     getOrderDetails();
-    // }, [])
+        getOrderDetails();
+    }, [])
 
     // Log orderDetails whenever it updates
-    // useEffect(() => {
-    // }, [orderDetails]);
+    useEffect(() => {
+    }, [orderDetails]);
 
 
     return (
-        <div className="mt-5">
+        <div className="my-28">
             {orderDetails == null || orderDetails.length === 0 ? <h1 className="text-center text-4xl font-bold">No Orders</h1> :
                 <>
                     <h1 className="text-center text-4xl font-bold">Your Orders</h1>
@@ -56,7 +65,7 @@ const Orders = () => {
 
                         return (
                             <div className="my-6">
-                                <div className="text-center py-8" key={order.docId}>
+                                <div className="text-center py-8" key={index}>
                                     <h1 className="text-xl font-bold">Order Id : {index + 1}</h1>
                                     <h1 className="text-xl font-bold">{formattedDate} {formattedTime}</h1>
                                     <table className="border-0 relative w-1/2 m-auto border-spacing-1 border-separate">
@@ -70,7 +79,7 @@ const Orders = () => {
                                         </thead>
                                         <tbody>
                                             {order.order.map(item =>
-                                                <tr className="bg-zinc-100">
+                                                <tr className="bg-zinc-100" key={item.docId}>
                                                     <td>{item.title}</td>
                                                     <td>₹ {item.price}</td>
                                                     <td>{item.quantity}</td>

@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { setcheckboxProducts, setTogglePrice } from '../redux/slices/productSlice/productslice';
+import { addDoc, collection, deleteDoc, getDocs } from 'firebase/firestore';
+import { db } from '../index';
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -12,6 +14,8 @@ const Sidebar = () => {
   const [value, setValue] = useState([]);
   const location = useLocation();
   const isCart = location.pathname == '/cart';
+  const navigate = useNavigate();
+
 
   const checkRange = (e) => {
     dispatch(setTogglePrice(e.target.value));
@@ -27,13 +31,49 @@ const Sidebar = () => {
     }
   }
 
-  const purchaseProd = () => {
-    // setPurchase(true);
-  }
-
+  // Memoize the calculation of the total price to avoid recalculating on every render
   const cartValue = useMemo(() => {
-    return cartdata.reduce((acc, item) => acc + item.quantity * item.price, 0)
-  }, [cartdata])
+    if (cartdata.length > 0) {
+      return cartdata.reduce((acc, item) => acc + item.quantity * item.price, 0)
+    }
+  }, [cartdata]);
+
+
+  const deleteAllDocumentsInCollection = async (collectionName) => {
+    const collectionRef = collection(db, collectionName);
+
+    try {
+      const querySnapshot = await getDocs(collectionRef);
+      const deletePromises = [];
+
+      querySnapshot.forEach((doc) => {
+        deletePromises.push(deleteDoc(doc.ref)); // Prepare a promise to delete each document
+      });
+
+      await Promise.all(deletePromises); // Wait for all delete promises to resolve
+    } catch (error) {
+      console.error("Error deleting documents:", error);
+    }
+  };
+
+
+  const addPurchases = async () => {
+    try {
+      if (cartdata.length > 0) {
+        const results = await addDoc(collection(db, "orders"), {
+          order: cartdata,
+          date: new Date(),
+          userid: localStorage.getItem("userId")
+        });
+        if (results) {
+          deleteAllDocumentsInCollection("cart");
+          navigate('/orders');
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 
 
@@ -76,13 +116,13 @@ const Sidebar = () => {
           </div>
         </aside >)
         :
-        (cartValue != 0 &&
+        (cartdata.length > 0 &&
           <aside className='bg-gray-200 w-[18%] fixed left-0 h-full pt-24 mt-10'>
             <div>
               <div className='flex justify-center items-center flex-wrap space-y-8'>
-                <h1 className='text-2xl text-green-950 font-semibold text-center w-full'>TotalPrice:- ₹ {cartValue}/- </h1>
+                <h1 className='text-2xl text-green-950 font-semibold text-center w-full'>TotalPrice:- ₹ {cartValue || 0}/- </h1>
                 <button type='submit' className='text-2xl rounded-xl w-1/2 left-2/4 border-blue-200 p-2 bg-blue-600 text-white'
-                  onClick={() => purchaseProd()} >Purchase</button>
+                  onClick={() => addPurchases()} >Purchase</button>
               </div>
             </div>
           </aside>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, getDoc, setDoc, query, where } from 'firebase/firestore';
 import { db } from "../index";
 import { toast, ToastContainer } from 'react-toastify';
 import SearchBox from './SearchBox';
@@ -72,82 +72,34 @@ const Products = (props) => {
 
     const fetchCartData = async () => {
         try {
-            const results = await getDocs(collection(db, "cart"));
-            const fetchedCart = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
-            dispatch(setCartData(fetchedCart))
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    const deleteAllDocumentsInCollection = async (collectionName) => {
-        const collectionRef = collection(db, collectionName);
-
-        try {
-            const querySnapshot = await getDocs(collectionRef);
-            const deletePromises = [];
-
-            querySnapshot.forEach((doc) => {
-                deletePromises.push(deleteDoc(doc.ref)); // Prepare a promise to delete each document
-            });
-
-            await Promise.all(deletePromises); // Wait for all delete promises to resolve
-        } catch (error) {
-            console.error("Error deleting documents:", error);
-        }
-    };
-
-
-
-    const addPurchases = async (data) => {
-        try {
-            const results = await addDoc(collection(db, "orders"), {
-                order: data,
-                date: new Date()
-            });
-            if (results) {
-                // setPurchase(false);
-                deleteAllDocumentsInCollection("products");
-                // setCart(null);
-                // setSharedData(0);
-                navigate('/orders');
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                toast.error("User not found.");
+                navigate('/signin');
+                return;
             }
+            const cartQuery = query(collection(db, "cart"), where("userid", '==', userId));
+            const results = await getDocs(cartQuery);
+            const fetchedCart = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
+            dispatch(setCartData(fetchedCart));
+            console.log(fetchedCart);
         } catch (error) {
             console.log(error);
         }
     }
-
-    // useEffect(() => {
-    //     if (props.cartTrue) {
-    //         fetchProducts();
-    //     }
-    //     if (purchase) {
-    //         addPurchases(CartData);
-    //     }
-    // }, [props.cartTrue, purchase, setPurchase]);
-
-
-    // Memoize the calculation of the total price to avoid recalculating on every render
-    // const totalPrice = useMemo(() => {
-    //     return CartData.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    // }, [CartData]);
-
-    // Update the shared data (total price) whenever CartData changes
-    // useEffect(() => {
-    //     setSharedData(totalPrice.toFixed());
-    // }, [setSharedData, totalPrice]);
-
 
 
     const addToCart = async (data) => {
         try {
-            setLoader(data.id)
+
             const userId = localStorage.getItem('userId');
 
             if (!userId) {
                 toast.error("You need to be logged in to add items to the cart.", { autoClose: 2000 });
+                navigate('/signin');
                 return;
             }
+            setLoader(data.id);
 
             const prodRef = doc(db, 'cart', `${userId}_${data.id}`);
             const docSnap = await getDoc(prodRef);
@@ -204,21 +156,13 @@ const Products = (props) => {
         }
     }
 
-
-    const setSearch = (val) => {
-        // let newData = data.filter((e) =>
-        //     e.title.toLowerCase().includes(val.toLowerCase())
-        // );
-        // setFilteredData(newData);
-    };
-
     return (
         <>
             <ToastContainer />
             <div className="w-[80%] ml-auto mx-3 pt-28">
-                <div className='flex justify-center my-6 '>
+                {!isCart && <div className='flex justify-center my-6 '>
                     <input type="text" placeholder='Search By Name' ref={inputRef} onChange={handleInputChange} className='w-1/3 text-xl border-violet-400 rounded-2xl p-3 border-2 highlight outline-none' />
-                </div>
+                </div>}
                 {/* {!isCart && <SearchBox setSearch={setSearch} />} */}
 
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8'>
@@ -250,7 +194,7 @@ const Products = (props) => {
                                     </div>
                                 ))
                             ) : (
-                                <h1 className='text-center items-center text-3xl'>Cart is Empty</h1>
+                                <h1 className='text-center items-center text-3xl my-5'>Cart is Empty</h1>
                             )
                         ) : (
                             filteredProducts?.map((data) => (

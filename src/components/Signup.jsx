@@ -28,8 +28,9 @@ const Signup = () => {
                 password: data.password,
                 userId: user.uid,
             });
-
-            toast.success('User created successfully',  { autoClose: 1000 });
+            setTimeout(() => {
+                toast.success('User created successfully',  { autoClose: 1000 });
+            }, 500);
             navigate('/signin');
 
             // // Hash the password using bcrypt.hash() with a salt round of 10
@@ -71,7 +72,9 @@ const Signup = () => {
             // Handle any errors and show an error notification
             console.log('Error occurred during sign-up:', error);
             setError(error.message);
-            toast.error('Something went wrong during the sign-up process', { autoClose: 1000 });
+            setTimeout(() => {
+                toast.error('Something went wrong during the sign-up process', { autoClose: 1000 });
+            }, 500);
         }
     };
 
