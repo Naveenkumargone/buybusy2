@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
+import { getAuth } from 'firebase/auth';
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -11,19 +12,18 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyD7Jv17dmnHgkknreTTa9zl5-74T6veaaE",
-  authDomain: "buybusy1-229de.firebaseapp.com",
-  projectId: "buybusy1-229de",
-  storageBucket: "buybusy1-229de.appspot.com",
-  messagingSenderId: "176015827092",
-  appId: "1:176015827092:web:55b5e89b41046b27921481",
-  measurementId: "G-7HPV3G3VHN",
+  apiKey: "AIzaSyAFG5D0fCyDJj3zFBkuOxPmbhcEBB9E_cA",
+  authDomain: "buybusy2-be5d4.firebaseapp.com",
+  projectId: "buybusy2-be5d4",
+  storageBucket: "buybusy2-be5d4.appspot.com",
+  messagingSenderId: "364521705169",
+  appId: "1:364521705169:web:7cda0f16b5840c99b47ff0"
 };
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-
+export const auth = getAuth(app);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

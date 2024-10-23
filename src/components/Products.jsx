@@ -1,21 +1,55 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from "../index";
+import { toast, ToastContainer } from 'react-toastify';
+import SearchBox from './SearchBox';
+import axios from "axios";
+import { setProducts } from '../redux/slices/productSlice/productslice';
+import { useDispatch, useSelector } from 'react-redux';
+import useAuth from '../auth/useAuth';
+import { setCartData } from '../redux/slices/productSlice/productslice';
 import more from "../assets/more.png";
 import less from "../assets/less.png";
-import { toast, ToastContainer } from 'react-toastify';
 
 const Products = (props) => {
-    const [CartData, setCartData] = useState([]);
+    const dispatch = useDispatch();
     const [Loader, setLoader] = useState(null);
+    const [data, setData] = useState(null); // Start with null instead of undefined
+    const [filteredData, setFilteredData] = useState(null);
     const navigate = useNavigate();
+    const productsData = useSelector((state) => state?.product?.products);
+    const { currentUser } = useAuth(); // Get current user from useAuth
+    const location = useLocation();
+    const cartData = useSelector((state) => state?.product?.cartData);
 
-    const fetchProducts = async () => {
+    const isCart = location.pathname == '/cart';
+
+    useEffect(() => {
+        if (isCart) {
+            fetchCartData();
+        }
+    }, [isCart]);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await axios.get("https://fakestoreapi.com/products");
+                dispatch(setProducts(result.data));
+            } catch (error) {
+                console.error("Error fetching data", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const fetchCartData = async () => {
         try {
-            const results = await getDocs(collection(db, "products"));
-            const fetchedProducts = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
-            setCartData(fetchedProducts);
+            const results = await getDocs(collection(db, "cart"));
+            const fetchedCart = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
+            dispatch(setCartData(fetchedCart))
         } catch (error) {
             console.log(error);
         }
@@ -67,15 +101,11 @@ const Products = (props) => {
     //     }
     // }, [props.cartTrue, purchase, setPurchase]);
 
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
 
     // Memoize the calculation of the total price to avoid recalculating on every render
-    const totalPrice = useMemo(() => {
-        return CartData.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    }, [CartData]);
+    // const totalPrice = useMemo(() => {
+    //     return CartData.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    // }, [CartData]);
 
     // Update the shared data (total price) whenever CartData changes
     // useEffect(() => {
@@ -83,19 +113,26 @@ const Products = (props) => {
     // }, [setSharedData, totalPrice]);
 
 
+
     const addToCart = async (data) => {
         try {
-            const prodRef = doc(db, 'products', data.title); // Reference to the document based on product ID
-            // Check if the document already exists
+            const userId = localStorage.getItem('userId');
+
+            if (!userId) {
+                toast.error("You need to be logged in to add items to the cart.", { autoClose: 2000 });
+                return;
+            }
+
+            const prodRef = doc(db, 'cart', `${userId}_${data.id}`);
             const docSnap = await getDoc(prodRef);
 
             if (docSnap.exists()) {
-                // Document exists, increment the quantity
-                const currentQuantity = docSnap.data().quantity; // Get current quantity, default to 1 if not present
+                const currentQuantity = docSnap.data().quantity || 1;
                 await updateDoc(prodRef, {
                     quantity: currentQuantity + 1 // Increment the quantity by 1
                 });
-                toast.success("Quantity updated in Cart");
+
+                toast.success("Quantity updated in Cart", {autoClose: 1000});
             } else {
                 // Document does not exist, create a new one with quantity 1
                 await setDoc(prodRef, {
@@ -103,16 +140,17 @@ const Products = (props) => {
                     title: data.title,
                     category: data.category,
                     image: data.image,
-                    price: data.price.toFixed(),
-                    quantity: 1 // Set initial quantity as 1
+                    price: Number(data.price.toFixed()), // Make sure price is a number
+                    quantity: 1, // Set initial quantity as 1
+                    userid: userId // Add the userId
                 });
-                toast.success("Added to Cart");
+                toast.success("Product added to Cart");
             }
         } catch (error) {
-            console.log("Error adding to cart:", error);
-            toast.error("Error adding to Cart");
+            toast.error("Error adding to Cart", { autoClose: 1000 });
         }
     };
+
 
     async function updateQuantity(id, quantity) {
         try {
@@ -122,7 +160,6 @@ const Products = (props) => {
                 const updateQuantity = { quantity: quantity };
                 const prodRef = doc(db, "products", id);
                 await updateDoc(prodRef, updateQuantity);
-                fetchProducts();
             }
         } catch (error) {
             console.log(error);
@@ -133,49 +170,28 @@ const Products = (props) => {
         try {
             const docRef = doc(db, "products", id);
             await deleteDoc(docRef);
-            fetchProducts();
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
 
-    function checkAuth(data) {
-        setLoader(data.id)
-        setCartData([...CartData, data]);
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.email || !user.passwordHash) {
-            navigate('/signin');
-        } else {
-            setLoader(data.id);
-            setTimeout(() => {
-                setLoader(null);
-                addToCart(data);
-            }, 1000);
-        }
-    }
+
+    const setSearch = (val) => {
+        let newData = data.filter((e) =>
+            e.title.toLowerCase().includes(val.toLowerCase())
+        );
+        setFilteredData(newData);
+    };
 
     return (
         <>
             <ToastContainer />
-            <div className='grid grid-cols-3 gap-8'>
-                {!props.cartTrue ?
-                    (props?.filteredData?.map((data, index) => {
+            <div className="w-[80%] ml-auto mx-3 pt-24">
+                <SearchBox setSearch={setSearch} />
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+                    {(location == '/cart' || isCart) ? cartData?.map((data) => {
                         return (
-                            <>
-                                <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.id || index}>
-                                    <img src={data.image} className='w-72 h-80 mb-4' alt="" />
-                                    <div className='space-y-4'>
-                                        <h1 className='text-ellipsis whitespace-nowrap overflow-hidden text-xl'>{data.title}</h1>
-                                        <p className='text-2xl font-bold text-gray-600'>₹ {data.price}</p>
-                                        <button type='submit' disabled={Loader === data.id} className='rounded-xl w-full border-blue-200 p-3 bg-blue-600 text-white text-2xl'
-                                            onClick={() => checkAuth(data)}>{Loader === data.id ? 'Adding To Cart...' : 'Add To Cart'} </button>
-                                    </div>
-                                </div>
-                            </>
-                        )
-                    })) : (CartData?.map((data, index) => {
-                        return (
-                            <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.docId || index}>
+                            <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.docId}>
                                 <img src={data.image} className='w-72 h-80 mb-4' alt="" />
                                 <div className='space-y-4'>
                                     <h1 className='text-ellipsis whitespace-nowrap overflow-hidden text-xl'>{data.title}</h1>
@@ -192,7 +208,20 @@ const Products = (props) => {
                                 </div>
                             </div>
                         )
-                    }))}
+                    }) : productsData?.map((data) => {
+                        return (
+                            <div className='border-2 rounded-2xl p-8 shadow-sm' key={data?.id}>
+                                <img src={data.image} className='w-72 h-80 mb-4' alt="" />
+                                <div className='space-y-4'>
+                                    <h1 className='text-ellipsis whitespace-nowrap overflow-hidden text-xl'>{data.title}</h1>
+                                    <p className='text-2xl font-bold text-gray-600'>₹ {data.price}</p>
+                                    <button type='submit' disabled={Loader === data.id} className='rounded-xl w-full border-blue-200 p-3 bg-blue-600 text-white text-2xl'
+                                        onClick={() => addToCart(data)}>{Loader === data.id ? 'Adding To Cart...' : 'Add To Cart'} </button>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
             </div>
         </>
     )
