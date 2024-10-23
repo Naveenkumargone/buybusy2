@@ -160,9 +160,9 @@ const Products = () => {
         <>
             <ToastContainer />
 
-            <div className="w-[80%] ml-auto mx-3 pt-28">
+            <div className="lg:w-[80%] w-[60%] ml-auto mx-3 pt-28">
                 {!isCart && <div className='flex justify-center my-6 '>
-                    <input type="text" placeholder='Search By Name' ref={inputRef} onChange={handleInputChange} className='w-1/3 text-xl border-violet-400 rounded-2xl p-3 border-2 highlight outline-none' />
+                    <input type="text" placeholder='Search By Name' ref={inputRef} onChange={handleInputChange} className='lg:w-1/3 sm:w-2/3 w-11/12 smtext-xl text-sm border-violet-400 rounded-2xl p-3 border-2 highlight outline-none' />
                 </div>}
 
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8'>
@@ -171,9 +171,9 @@ const Products = () => {
                             cartData.length > 0 ? (
                                 cartData.map((data) => (
                                     <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.docId}>
-                                        <img src={data.image} className='w-72 h-80 mb-4' alt={data.title} />
+                                        <img src={data.image} className='lg:w-72 lg:h-80 mb-4 w-32 h-32 m-auto' alt={data.title} />
                                         <div className='space-y-4'>
-                                            <h1 className='text-ellipsis whitespace-nowrap overflow-hidden text-xl'>{data.title}</h1>
+                                            <h1 className='text-ellipsis whitespace-nowrap overflow-hidden lg:text-xl text:md'>{data.title}</h1>
                                             <div className='flex justify-between text-2xl'>
                                                 <p className='text-2xl font-bold text-gray-600'>₹ {data.price}</p>
                                                 <div className='flex justify-evenly items-center w-1/2'>
@@ -185,7 +185,7 @@ const Products = () => {
                                             <button
                                                 type='submit'
                                                 disabled={Loader === data.id}
-                                                className='rounded-xl w-full border-blue-200 p-3 bg-red-600 text-white text-2xl'
+                                                className='rounded-xl w-full border-blue-200 lg:p-3 p-1 bg-red-600 text-white lg:text-2xl text-md'
                                                 onClick={() => removeCart(data.docId)}
                                             >
                                                 {Loader === data.id ? 'Removing From Cart' : 'Remove From Cart'}
@@ -199,14 +199,14 @@ const Products = () => {
                         ) : (
                             filteredProducts.map((data) => (
                                 <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.id}>
-                                    <img src={data.image} className='w-72 h-80 mb-4' alt={data.title} />
+                                    <img src={data.image} className='lg:w-72 lg:h-80 mb-4 w-32 h-32 m-auto' alt={data.title} />
                                     <div className='space-y-4'>
-                                        <h1 className='text-ellipsis whitespace-nowrap overflow-hidden text-xl'>{data.title}</h1>
+                                        <h1 className='text-ellipsis whitespace-nowrap overflow-hidden lg:text-xl text:md'>{data.title}</h1>
                                         <p className='text-2xl font-bold text-gray-600'>₹ {data.price}</p>
                                         <button
                                             type='submit'
                                             disabled={Loader === data.id}
-                                            className='rounded-xl w-full border-blue-200 p-3 bg-blue-600 text-white text-2xl'
+                                            className='rounded-xl w-full border-blue-200 lg:p-3 p-1 bg-blue-600 text-white lg:text-2xl text-md'
                                             onClick={() => addToCart(data)}
                                         >
                                             {Loader === data.id ? 'Adding To Cart...' : 'Add To Cart'}

@@ -49,7 +49,7 @@ const Orders = () => {
             <div className="my-28">
                 {orderDetails == null || orderDetails.length === 0 ? <h1 className="text-center text-4xl font-bold">No Orders</h1> :
                     <>
-                        <h1 className="text-center text-4xl font-bold">Your Orders</h1>
+                        <h1 className="text-center lg:text-4xl sm:text-3xl text-2xl font-bold">Your Orders</h1>
                         {orderDetails.map((order, index) => {
                             const timestamp = order.date; // Adjust this based on your data structure
                             const orderDate = new Date(
@@ -78,9 +78,9 @@ const Orders = () => {
                             return (
                                 <div className="my-6">
                                     <div className="text-center py-8" key={index}>
-                                        <h1 className="text-xl font-bold">Order Id : {index + 1}</h1>
-                                        <h1 className="text-xl font-bold">{formattedDate} {formattedTime}</h1>
-                                        <table className="border-0 relative w-1/2 m-auto border-spacing-1 border-separate">
+                                        <h1 className="lg:text-xl sm:text-lg text-md font-bold">Order Id : {index + 1}</h1>
+                                        <h1 className="lg:text-xl sm:text-lg text-md font-bold">{formattedDate} {formattedTime}</h1>
+                                        <table className="border-0 relative md:w-1/2 w-11/12  m-auto border-spacing-1 border-separate">
                                             <thead>
                                                 <tr className="bg-zinc-100">
                                                     <th className="p-3 border-b-2 border-black">Title</th>
