@@ -16,9 +16,7 @@ const Signup = () => {
     const handleSignUp = async (data) => {
         try {
             // Use Firebase Authentication for sign-up
-            console.log(data);
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-            console.log('userCredential', userCredential);
             const user = userCredential.user;
 
             // Add user data to Firestore
@@ -70,7 +68,6 @@ const Signup = () => {
             // }
         } catch (error) {
             // Handle any errors and show an error notification
-            console.log('Error occurred during sign-up:', error);
             setError(error.message);
             setTimeout(() => {
                 toast.error('Something went wrong during the sign-up process', { autoClose: 1000 });

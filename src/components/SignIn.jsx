@@ -16,7 +16,6 @@ const SignIn = () => {
     const navigate = useNavigate();
 
     const handleSignIn = async (data) => {
-        console.log(data);
         try {
             const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
             const user = userCredential.user;

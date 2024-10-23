@@ -83,7 +83,6 @@ const Products = () => {
             const results = await getDocs(cartQuery);
             const fetchedCart = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
             dispatch(setCartData(fetchedCart));
-            console.log(fetchedCart);
         } catch (error) {
             console.log(error);
         }

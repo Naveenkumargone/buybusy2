@@ -33,7 +33,7 @@ const Orders = () => {
                 const fetchedOrders = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
                 setOrderDetails(fetchedOrders);
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }
         }
 
