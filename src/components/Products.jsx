@@ -11,8 +11,9 @@ import useAuth from '../auth/useAuth';
 import { setCartData } from '../redux/slices/productSlice/productslice';
 import more from "../assets/more.png";
 import less from "../assets/less.png";
+import { SpinnerLoader } from './Loader';
 
-const Products = (props) => {
+const Products = () => {
     const dispatch = useDispatch();
     const inputRef = useRef(null);
     const [Loader, setLoader] = useState(null);
@@ -159,17 +160,17 @@ const Products = (props) => {
     return (
         <>
             <ToastContainer />
+
             <div className="w-[80%] ml-auto mx-3 pt-28">
                 {!isCart && <div className='flex justify-center my-6 '>
                     <input type="text" placeholder='Search By Name' ref={inputRef} onChange={handleInputChange} className='w-1/3 text-xl border-violet-400 rounded-2xl p-3 border-2 highlight outline-none' />
                 </div>}
-                {/* {!isCart && <SearchBox setSearch={setSearch} />} */}
 
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8'>
                     {
                         (location === '/cart' || isCart) ? (
-                            cartData?.length > 0 ? (
-                                cartData?.map((data) => (
+                            cartData.length > 0 ? (
+                                cartData.map((data) => (
                                     <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.docId}>
                                         <img src={data.image} className='w-72 h-80 mb-4' alt={data.title} />
                                         <div className='space-y-4'>
@@ -197,8 +198,8 @@ const Products = (props) => {
                                 <h1 className='text-center items-center text-3xl my-5'>Cart is Empty</h1>
                             )
                         ) : (
-                            filteredProducts?.map((data) => (
-                                <div className='border-2 rounded-2xl p-8 shadow-sm' key={data?.id}>
+                            filteredProducts.map((data) => (
+                                <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.id}>
                                     <img src={data.image} className='w-72 h-80 mb-4' alt={data.title} />
                                     <div className='space-y-4'>
                                         <h1 className='text-ellipsis whitespace-nowrap overflow-hidden text-xl'>{data.title}</h1>
@@ -217,8 +218,8 @@ const Products = (props) => {
                         )
                     }
                 </div>
-
             </div>
+            {filteredProducts.length == 0 && !isCart && <SpinnerLoader />}
         </>
     )
 }

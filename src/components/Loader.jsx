@@ -1,6 +1,6 @@
 import Spinner from 'react-spinner-material';
 
-export function Loader() {
+export function SpinnerLoader() {
     return (
         // <div className='flex justify-center items-center'>
         //     <Spinner radius={120} color={"#333"} stroke={10} visible={true} />
