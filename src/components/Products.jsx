@@ -6,12 +6,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import less from "../assets/less.png";
 import more from "../assets/more.png";
-import useAuth from '../auth/useAuth';
 import { db } from "../index";
 import { setCartData, setfilteredProducts, setProducts } from '../redux/slices/productSlice/productslice';
 import { SpinnerLoader } from './Loader';
 
-const Products = () => {
+const Products = ({ isOpen }) => {
     const dispatch = useDispatch();
     const inputRef = useRef(null);
     const [Loader, setLoader] = useState(null);
@@ -20,7 +19,6 @@ const Products = () => {
     const togglePrice = useSelector((state) => state?.product?.togglePrice);
     const productsData = useSelector((state) => state?.product?.products);
     const filteredProducts = useSelector((state) => state?.product?.filteredProducts);
-    const { currentUser } = useAuth(); // Get current user from useAuth
     const location = useLocation();
     const cartData = useSelector((state) => state?.product?.cartData);
     const checkboxValues = useSelector((state) => state.product.checkboxProducts);
@@ -157,7 +155,7 @@ const Products = () => {
     return (
         <>
             <ToastContainer />
-            <div className="lg:w-[80%] w-[60%] ml-auto mx-3 pt-28">
+            <div className={`ml-auto mx-3 pt-28 transition-all duration-300 ${isCart ? 'lg:w-[80%] w-[57%]' : (isOpen ? 'lg:w-[80%] w-[57%]' : 'sm:w-[95%] w-[88%] ')}`}>
                 {!isCart && <div className='flex justify-center my-6 '>
                     <input type="text" placeholder='Search By Name' ref={inputRef} onChange={handleInputChange} className='lg:w-1/3 sm:w-2/3 w-11/12 smtext-xl text-sm border-violet-400 rounded-2xl p-3 border-2 highlight outline-none' />
                 </div>}

@@ -11,8 +11,11 @@ import Orders from "./components/Orders";
 import store from "./redux/store";
 import { Provider } from "react-redux";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import { useState } from "react";
 
 function App() {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
     <>
       <Provider store={store}>
@@ -22,8 +25,8 @@ function App() {
             path="/"
             element={
               <>
-                <Sidebar />
-                <Products />
+                <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+                <Products isOpen={isOpen} />
               </>
             }
           />

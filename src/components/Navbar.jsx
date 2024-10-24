@@ -33,29 +33,29 @@ export default function Navbar() {
                     </div>
                     <div className='flex align-baseline justify-between text-xl text-blue-700 font-semibold lg:space-x-10 sm:space-x-8 space-x-4'>
                         <Link to="/" className='flex items-center sm:text-sm md:text-base lg:text-lg xl:text-xl text-sm'>
-                            <img src={home} className='lg:w-10 lg:h-10 md:w-9 md:h-9 w-8 h-8 object-cover home' alt="" />
+                            <img src={home} className='lg:w-10 lg:h-10 md:w-9 md:h-9 w-8 h-8 object-cover sm:block hidden' alt="" />
                             <h1>Home</h1>
                         </Link>
                         {currentUser ? (
                             <>
                                 <Link to="/orders" className='flex items-center sm:text-sm md:text-base lg:text-lg xl:text-xl text-sm'>
-                                    <img src={orders} className='lg:w-10 lg:h-10 md:w-9 md:h-9 w-8 h-8 object-cover home' alt="" />
+                                    <img src={orders} className='lg:w-10 lg:h-10 md:w-9 md:h-9 w-8 h-8 object-cover sm:block hidden' alt="" />
                                     <h1>My orders</h1>
                                 </Link>
                                 <Link to="/cart" className='flex items-center sm:text-sm md:text-base lg:text-lg xl:text-xl text-sm'>
-                                    <img src={cart} className='lg:w-10 lg:h-10 md:w-9 md:h-9 w-8 h-8 object-cover' alt="" />
+                                    <img src={cart} className='lg:w-10 lg:h-10 md:w-9 md:h-9 w-8 h-8 object-cover sm:block hidden' alt="" />
                                     <h1>Cart</h1>
                                 </Link>
                                 <Link className='flex items-center sm:text-sm md:text-base lg:text-lg xl:text-xl text-sm' onClick={() => logoutSession()}>
-                                    <img src={logout} className='lg:w-10 lg:h-10 md:w-9 md:h-9 w-8 h-8 object-cover' alt="" />
+                                    <img src={logout} className='lg:w-10 lg:h-10 md:w-9 md:h-9 sm:w-8 sm:h-8 object-cover w-6 h-6' alt="" />
                                     <h1>Logout</h1>
                                 </Link>
                             </>
                         ) :
                             (
                                 <>
-                                    <Link to="/signin" className='flex items-center'>
-                                        <img src={lock} className='w-10 h-10 object-cover' alt="" />
+                                    <Link to="/signin" className='flex items-center sm:text-sm md:text-base lg:text-lg xl:text-xl text-sm'>
+                                        <img src={lock} className='lg:w-10 lg:h-10 md:w-9 md:h-9 w-8 h-8 object-cover sm:block hidden' alt="" />
                                         <h1>SignIn</h1>
                                     </Link>
                                 </>

@@ -2,11 +2,11 @@ import React from 'react'
 import Sidebar from './Sidebar';
 import Products from './Products';
 
-const CartPage = ({ cartTrue }) => {
+const CartPage = ({ }) => {
     return (
         <>
-            <Sidebar cartTrue={cartTrue} />
-            <Products cartTrue={cartTrue} />
+            <Sidebar />
+            <Products />
         </>
     )
 }
