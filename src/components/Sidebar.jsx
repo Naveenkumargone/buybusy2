@@ -86,7 +86,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       <ToastContainer />
       <aside
         className={`bg-gray-200 fixed left-0 h-full pt-24 mt-10 transition-all duration-300 ${isCart && cartdata.length === 0 ? 'hidden' :
-          (isOpen && !isCart ? 'sm:w-[18%] w-[75%]' : (isCart && cartdata.length > 0 ? 'sm:w-[18%] w-[75%]' : 'sm:w-[2%] w-[8%]'))}`}
+          (isOpen && !isCart ? 'sm:w-[18%] w-[74%]' : (isCart && cartdata.length > 0 ? 'sm:w-[18%] w-[35%]' : 'sm:w-[2%] w-[8%]'))}`}
         style={{ overflow: 'hidden' }}
       >
         {

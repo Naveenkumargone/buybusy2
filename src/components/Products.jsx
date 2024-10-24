@@ -147,6 +147,9 @@ const Products = ({ isOpen }) => {
             const docRef = doc(db, "cart", id);
             await deleteDoc(docRef);
             fetchCartData();
+            // setTimeout(() => {
+            //     toast.success("Product removed from the Cart", { autoClose: 1000 });
+            // }, 500);
         } catch (error) {
             console.log(error);
         }
@@ -155,7 +158,7 @@ const Products = ({ isOpen }) => {
     return (
         <>
             <ToastContainer />
-            <div className={`ml-auto mx-3 pt-28 transition-all duration-300 ${isCart ? 'lg:w-[80%] w-[57%]' : (isOpen ? 'lg:w-[80%] w-[57%]' : 'sm:w-[95%] w-[88%] ')}`}>
+            <div className={`ml-auto mx-3 pt-28 transition-all duration-300 ${isCart ? 'lg:w-[80%] w-[60%]' : (isOpen ? 'lg:w-[80%] w-[57%]' : 'sm:w-[95%] w-[86%] ')}`}>
                 {!isCart && <div className='flex justify-center my-6 '>
                     <input type="text" placeholder='Search By Name' ref={inputRef} onChange={handleInputChange} className='lg:w-1/3 sm:w-2/3 w-11/12 smtext-xl text-sm border-violet-400 rounded-2xl p-3 border-2 highlight outline-none' />
                 </div>}
@@ -166,7 +169,7 @@ const Products = ({ isOpen }) => {
                             cartData.length > 0 ? (
                                 cartData.map((data) => (
                                     <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.docId}>
-                                        <img src={data.image} className='lg:w-72 lg:h-80 mb-4 w-32 h-32 m-auto' alt={data.title} />
+                                        <img src={data.image} className='lg:w-72 lg:h-80 mb-4 w-60 h-60 m-auto' alt={data.title} />
                                         <div className='space-y-4'>
                                             <h1 className='text-ellipsis whitespace-nowrap overflow-hidden lg:text-xl text:md'>{data.title}</h1>
                                             <div className='flex justify-between text-2xl'>
@@ -194,7 +197,7 @@ const Products = ({ isOpen }) => {
                         ) : (
                             filteredProducts.map((data) => (
                                 <div className='border-2 rounded-2xl p-8 shadow-sm' key={data.id}>
-                                    <img src={data.image} className='lg:w-72 lg:h-80 mb-4 w-32 h-32 m-auto' alt={data.title} />
+                                    <img src={data.image} className='lg:w-72 lg:h-80 mb-4 w-60 h-60 m-auto' alt={data.title} />
                                     <div className='space-y-4'>
                                         <h1 className='text-ellipsis whitespace-nowrap overflow-hidden lg:text-xl text:md'>{data.title}</h1>
                                         <p className='text-2xl font-bold text-gray-600'>₹ {data.price}</p>
