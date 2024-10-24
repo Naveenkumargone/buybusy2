@@ -31,9 +31,6 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/cart" element={<ProtectedRoute component={CartPage} />} />
           <Route path="/orders" element={<ProtectedRoute component={Orders} />} />
-
-          {/* <Route path="/cart" element={<CartPage cartTrue={true} />} /> */}
-          {/* <Route path="/orders" element={<Orders />} /> */}
         </Routes>
       </Provider>
     </>

@@ -1,16 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, getDoc, setDoc, query, where } from 'firebase/firestore';
-import { db } from "../index";
-import { toast, ToastContainer } from 'react-toastify';
-import SearchBox from './SearchBox';
 import axios from "axios";
-import { setfilteredProducts, setProducts } from '../redux/slices/productSlice/productslice';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useAuth from '../auth/useAuth';
-import { setCartData } from '../redux/slices/productSlice/productslice';
-import more from "../assets/more.png";
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 import less from "../assets/less.png";
+import more from "../assets/more.png";
+import useAuth from '../auth/useAuth';
+import { db } from "../index";
+import { setCartData, setfilteredProducts, setProducts } from '../redux/slices/productSlice/productslice';
 import { SpinnerLoader } from './Loader';
 
 const Products = () => {
@@ -159,7 +157,6 @@ const Products = () => {
     return (
         <>
             <ToastContainer />
-
             <div className="lg:w-[80%] w-[60%] ml-auto mx-3 pt-28">
                 {!isCart && <div className='flex justify-center my-6 '>
                     <input type="text" placeholder='Search By Name' ref={inputRef} onChange={handleInputChange} className='lg:w-1/3 sm:w-2/3 w-11/12 smtext-xl text-sm border-violet-400 rounded-2xl p-3 border-2 highlight outline-none' />

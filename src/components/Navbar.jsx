@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import useAuth from '../auth/useAuth';
 import { signOut } from 'firebase/auth';
-import {auth} from '../index';
+import { auth } from '../index';
 
 
 export default function Navbar() {
@@ -17,7 +17,7 @@ export default function Navbar() {
     const logoutSession = async () => {
         await signOut(auth);
         setTimeout(() => {
-            toast.success("User logged out",  { autoClose: 1000 });
+            toast.success("User logged out", { autoClose: 1000 });
         }, 100);
         localStorage.removeItem('userId')
     }
@@ -25,6 +25,7 @@ export default function Navbar() {
 
     return (
         <>
+            <ToastContainer />
             <nav className='m-auto p-7 z-50 shadow-md w-full fixed top-0 bg-white'>
                 <div className='flex justify-between w-full align-center'>
                     <div className="">

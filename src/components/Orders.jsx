@@ -1,7 +1,7 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { db } from "../index";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { SpinnerLoader } from "./Loader";
 
 const Orders = () => {
@@ -15,8 +15,6 @@ const Orders = () => {
 
         return () => clearTimeout(timer); // Cleanup on unmount
     }, []);
-
-
 
     useEffect(() => {
         async function getOrderDetails() {
@@ -46,6 +44,7 @@ const Orders = () => {
 
     return (
         <>
+            <ToastContainer />
             <div className="my-28">
                 {orderDetails == null || orderDetails.length === 0 ? <h1 className="text-center text-4xl font-bold">No Orders</h1> :
                     <>
