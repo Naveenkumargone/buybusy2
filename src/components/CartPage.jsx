@@ -2,7 +2,7 @@ import React from 'react'
 import Sidebar from './Sidebar';
 import Products from './Products';
 
-const CartPage = ({ }) => {
+const CartPage = () => {
     return (
         <>
             <Sidebar />

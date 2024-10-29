@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { setcheckboxProducts, setTogglePrice } from '../redux/slices/productSlice/productslice';
 import { addDoc, collection, deleteDoc, getDocs } from 'firebase/firestore';
 import { db } from '../index';
@@ -63,13 +63,22 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   const addPurchases = async () => {
     try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        toast.error("User not found.");
+        navigate('/signin');
+        return;
+      }
+      const order = {
+        order: cartdata,
+        date: new Date(),
+        userid: localStorage.getItem("userId"),
+      }
+
       if (cartdata.length > 0) {
-        const results = await addDoc(collection(db, "orders"), {
-          order: cartdata,
-          date: new Date(),
-          userid: localStorage.getItem("userId")
-        });
+        const results = await addDoc(collection(db, "orders"), order);
         if (results) {
+          toast.success('Product purchased successfully');
           deleteAllDocumentsInCollection("cart");
           navigate('/orders');
         }

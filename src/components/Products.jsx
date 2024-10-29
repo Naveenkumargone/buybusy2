@@ -1,5 +1,5 @@
 import axios from "axios";
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ const Products = ({ isOpen }) => {
     const dispatch = useDispatch();
     const inputRef = useRef(null);
     const [Loader, setLoader] = useState(null);
+    const [Fetching, setFetching] = useState(true);
     const [inputValue, setInputValue] = useState('');
     const navigate = useNavigate();
     const togglePrice = useSelector((state) => state?.product?.togglePrice);
@@ -26,12 +27,15 @@ const Products = ({ isOpen }) => {
     const isCart = location.pathname == '/cart';
 
     useEffect(() => {
+        setFetching(true);
         const fetchData = async () => {
             try {
                 const result = await axios.get("https://fakestoreapi.com/products");
                 dispatch(setProducts(result.data));
             } catch (error) {
                 console.error("Error fetching data", error);
+            } finally {
+                setFetching(false);
             }
         };
         fetchData();
@@ -44,6 +48,7 @@ const Products = ({ isOpen }) => {
 
     useEffect(() => {
         if (productsData.length > 0) {
+            setFetching(true);
             const filteredData = productsData.filter(product => {
                 if (checkboxValues.length === 0 && inputValue != '') {
                     return togglePrice > product.price && product.title.toLowerCase().includes(inputValue.toLowerCase());
@@ -57,6 +62,7 @@ const Products = ({ isOpen }) => {
                 }
             });
             dispatch(setfilteredProducts(filteredData));
+            setFetching(false);
         }
 
     }, [togglePrice, productsData, dispatch, checkboxValues, inputValue]);
@@ -69,6 +75,7 @@ const Products = ({ isOpen }) => {
 
     const fetchCartData = async () => {
         try {
+            setFetching(false);
             const userId = localStorage.getItem('userId');
             if (!userId) {
                 toast.error("User not found.");
@@ -80,7 +87,9 @@ const Products = ({ isOpen }) => {
             const fetchedCart = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
             dispatch(setCartData(fetchedCart));
         } catch (error) {
-            console.log(error);
+            toast.error(error.message)
+        } finally {
+            setFetching(true);
         }
     }
 
@@ -216,7 +225,8 @@ const Products = ({ isOpen }) => {
                     }
                 </div>
             </div>
-            {filteredProducts.length == 0 && !isCart && <SpinnerLoader />}
+            {Fetching && !isCart && <SpinnerLoader />}
+            {!Fetching && !isCart && filteredProducts.length == 0 && <h1 className='text-center items-center text-3xl my-5'>No Product Found</h1>}
         </>
     )
 }

@@ -1,16 +1,17 @@
-import { Route, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../index";
+import { SpinnerLoader } from "../components/Loader";
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
+const ProtectedRoute = ({ component: Component }) => {
     const [user, loading] = useAuthState(auth);
 
     if (loading) {
-        return <div>Loading...</div>;  // Optional: you can add a loading spinner here
+        return <SpinnerLoader />;
     }
 
     return user ? (
-        <Component {...rest} />
+        <Component />
     ) : (
         <Navigate to="/signin" />
     );

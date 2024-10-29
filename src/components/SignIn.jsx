@@ -66,7 +66,7 @@ const SignIn = () => {
 
                     <div className=''>
                         <div className='relative'>
-                            <input type={showPassword ? "password" : "text"} placeholder='Enter Password'
+                            <input type={showPassword ? "text" : "password"} placeholder='Enter Password'
                                 maxLength={50} minLength={8}
                                 className=' rounded-2xl  p-2 border-2 highlight outline-none  w-full'
                                 {...register('password', {
@@ -84,7 +84,7 @@ const SignIn = () => {
                                 className="absolute top-[30%] right-[8%] cursor-pointer"
                                 onClick={handlePasswordVisibility}
                             >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                {showPassword ? <FaEye /> : <FaEyeSlash /> }
                             </span>
                         </div>
                         {errors.password && <Error title={errors.password.message} />}

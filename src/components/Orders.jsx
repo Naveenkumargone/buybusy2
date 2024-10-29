@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { db } from "../index";
 import { toast, ToastContainer } from "react-toastify";
@@ -23,7 +23,7 @@ const Orders = () => {
                 const fetchedOrders = results.docs.map((doc) => ({ docId: doc.id, ...doc.data() }));
                 setOrderDetails(fetchedOrders);
             } catch (error) {
-                // console.log(error);
+                toast.error("Failed to fetch orders. Please try again.");
             } finally {
                 setIsLoading(false);
             }
@@ -43,8 +43,8 @@ const Orders = () => {
 
             {isLoading ? <SpinnerLoader /> :
                 <div className="my-28">
-                    {orderDetails == null || orderDetails.length === 0 ? <h1 className="text-center text-4xl font-bold">No Orders</h1> :
-                        <>
+                    {orderDetails == null  ? <h1 className="text-center text-4xl font-bold">No Orders</h1> :
+                       <>
                             <h1 className="text-center lg:text-4xl sm:text-3xl text-2xl font-bold">Your Orders</h1>
                             {orderDetails.map((order, index) => {
                                 const timestamp = order.date; // Adjust this based on your data structure
@@ -74,7 +74,7 @@ const Orders = () => {
                                 return (
                                     <div className="my-6">
                                         <div className="text-center py-8" key={index}>
-                                            <h1 className="lg:text-xl sm:text-lg text-md font-bold">Order Id : {index + 1}</h1>
+                                            {/* <h1 className="lg:text-xl sm:text-lg text-md font-bold">Order Id : {index + 1}</h1> */}
                                             <h1 className="lg:text-xl sm:text-lg text-md font-bold">{formattedDate} {formattedTime}</h1>
                                             <table className="border-0 relative md:w-1/2 w-11/12  m-auto border-spacing-1 border-separate">
                                                 <thead>
@@ -86,8 +86,8 @@ const Orders = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {order.order.map(item =>
-                                                        <tr className="bg-zinc-100" key={item.docId}>
+                                                    {order.order.map((item) =>
+                                                        <tr className="bg-zinc-100" key={item?.docId || item.title}>
                                                             <td>{item.title}</td>
                                                             <td>₹ {item.price}</td>
                                                             <td>{item.quantity}</td>
